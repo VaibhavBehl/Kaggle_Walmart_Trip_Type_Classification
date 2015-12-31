@@ -1,0 +1,8 @@
+*.zip
+*.7z
+*_can_delete
+__*
+.project
+.pydevproject
+*.np.save
+*.pickle.dump

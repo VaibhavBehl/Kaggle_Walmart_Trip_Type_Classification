@@ -1,0 +1,61 @@
+tr11_1 <- tr11[tr11$upc1==1]
+tr11_2 <- tr11[tr11$upc1==2]
+tr11_3 <- tr11[tr11$upc1==3]
+tr11_4 <- tr11[tr11$upc1==4]
+tr11_5 <- tr11[tr11$upc1==5]
+tr11_6 <- tr11[tr11$upc1==6]
+tr11_7 <- tr11[tr11$upc1==7]
+tr11_8 <- tr11[tr11$upc1==8]
+tr11_9 <- tr11[tr11$upc1==9]
+
+train_ul2 <- train[train$upcLen==2]
+train_ul3 <- train[train$upcLen==3]
+train_ul4 <- train[train$upcLen==4]
+train_ul5 <- train[train$upcLen==5]
+train_ul7 <- train[train$upcLen==7]
+train_ul8 <- train[train$upcLen==8]
+train_ul9 <- train[train$upcLen==9]
+train_ul10 <- train[train$upcLen==10]
+train_ul11 <- train[train$upcLen==11]
+train_ul12 <- train[train$upcLen==12]
+
+
+tr3 <- train[train$Upc>99 & train$Upc<=999]
+tr4 <- train[train$Upc>999 & train$Upc<=9999]
+tr5 <- train[train$Upc>9999 & train$Upc<=99999]
+tr8 <- train[train$Upc>9999999 & train$Upc<=99999999]
+tr9 <- train[train$Upc>99999999 & train$Upc<=999999999]
+tr10 <- train[train$Upc>999999999 & train$Upc<=9999999999]
+tr11 <- train[train$Upc>9999999999 & train$Upc<=99999999999]
+tr12 <- train[train$Upc>99999999999 & train$Upc<=999999999999]
+
+te3 <- test[test$Upc>99 & test$Upc<=999]
+te4 <- test[test$Upc>999 & test$Upc<=9999]
+te5 <- test[test$Upc>9999 & test$Upc<=99999]
+te8 <- test[test$Upc>9999999 & test$Upc<=99999999]
+te9 <- test[test$Upc>99999999 & test$Upc<=999999999]
+te10 <- test[test$Upc>999999999 & test$Upc<=9999999999]
+te11 <- test[test$Upc>9999999999 & test$Upc<=99999999999]
+te12 <- test[test$Upc>99999999999 & test$Upc<=999999999999]
+
+> length(which(train$Upc<=999))...,test
+[3-digit] 7, 15
+> length(which(train$Upc>999 & train$Upc<=9,999))...,test
+[4-digit] 29745, 29564
+> length(which(train$Upc>9,999 & train$Upc<=99,999))...,test
+[5-digit] 372, 286
+> length(which(train$Upc>99,999 & train$Upc<=999,999))...,test
+[6-digit] 0, 0
+> length(which(train$Upc>999,999 & train$Upc<=9,999,999))...,test
+[7-digit] 1, 1
+> length(which(train$Upc>9,999,999 & train$Upc<=99,999,999))...,test
+[8-digit] 412, 400
+> length(which(train$Upc>99,999,999 & train$Upc<=999,999,999))...,test
+[9-digit] 2166, 2314
+> length(which(train$Upc>999,999,999 & train$Upc<=9,999,999,999))...,test
+[10-digit] 433341, 439012
+> length(which(train$Upc>9,999,999,999 & train$Upc<=99,999,999,999))...,test
+[11-digit] 168418, 169550
+> length(which(train$Upc>99,999,999,999 & train$Upc<=999,999,999,999))...,test
+[12-digit] 8463, 8518
+> length(which(train$Upc>999,999,999,999 & train$Upc<=9,999,999,999,999))...,test

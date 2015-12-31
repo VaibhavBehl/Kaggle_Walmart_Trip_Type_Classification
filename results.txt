@@ -1,0 +1,225 @@
+** NN **
+
+*v5.4
+- (top 300 features)[I,1000,O], ep=50
+accuracy:0.510264205347
+log-loss:1.71462732119
+- (top 5392 features)[I,1000,O], ep=50
+accuracy:0.544645375623
+log-loss:1.64537599254
+- (top 5392 features)[I,1000,O], ep=2000
+
+- (top 5392 features)[I,1000,O], ep=50, scaled
+accuracy:0.726862443978
+log-loss:0.900835504546
+<all scaled from here on>
+- (top 5392 features)[I,1000,O], ep=50, scaled, removed shuffle from 2 places(accuracy decreased)
+accuracy:0.721221048673
+log-loss:0.910756636231
+- (top 5392 features)[I,1000,O], ep=50, scaled, model shuffle set again
+accuracy:0.721221048673
+log-loss:0.910756636231
+
+** XGB **
+*General 
+- for eta(0.1) -> nRound~84
+- for eta(0.2) -> nRound~47
+- for eta(0.3) -> nRound~33
+- for eta(0.01) -> nRound>500
+
+*v5.1
+- 30,50,0.3 (max_delta_step:1)
+accuracy_score(yTe, yhTe)  0.74021374619989344
+cross_entropy(yhP, yTe, classes) 0.81330335 
+
+----hyper-param-op----
+- subsample-default=1,range: (0,1], colsample_bytree-default=1,range: (0,1] using v5.x
+(      none     ) [28]	train-mlogloss:0.071961	test-mlogloss:0.814705 (acc-0.7399316764346382)
+('subsample':0.8) [32]	train-mlogloss:0.077871	test-mlogloss:0.795805 (acc-0.73943021907418438)
+('subsample':0.8, 'colsample_bytree':0.5) [34]	train-mlogloss:0.096749	test-mlogloss:0.811207 (acc-0.73664086250665994)(down slowly)
+('subsample':0.8, 'colsample_bytree':0.8)[31]	train-mlogloss:0.085899	test-mlogloss:0.793036 (acc-0.74011972294480832) **
+- 100,50,0.1: ('subsample':0.8, 'colsample_bytree':0.8) [99]	train-mlogloss:0.080830	test-mlogloss:0.765671 !!**
+
+- min_child_weight[default=1] (taking best from before-- 'subsample':0.8, 'colsample_bytree':0.8)
+('min_child_weight':2) [34]	train-mlogloss:0.112943	test-mlogloss:0.786773
+('min_child_weight':3) [34]	train-mlogloss:0.143297	test-mlogloss:0.783918 **
+('min_child_weight':5) [31]	train-mlogloss:0.218435	test-mlogloss:0.790306
+('min_child_weight':10) [34] train-mlogloss:0.318101	test-mlogloss:0.795033
+('min_child_weight':15) [34] train-mlogloss:0.411870	test-mlogloss:0.806976
+
+- lambda [default=1] (taking best from before-- 'subsample':0.8, 'colsample_bytree':0.8, 'min_child_weight':3)
+('lambda':2) [34]	train-mlogloss:0.161339	test-mlogloss:0.778352
+('lambda':3) [34]	train-mlogloss:0.177595	test-mlogloss:0.774344
+('lambda':5) [34]	train-mlogloss:0.205702	test-mlogloss:0.770419
+('lambda':8) [34]	train-mlogloss:0.240064	test-mlogloss:0.766141 **
+('lambda':13) [34]	train-mlogloss:0.284234	test-mlogloss:0.769082 (down s 3rd)
+('lambda':21) [34]	train-mlogloss:0.336630	test-mlogloss:0.768323 (down s 3rd)
+('lambda':34) [34]	train-mlogloss:0.394914	test-mlogloss:0.773627 (down m 3rd)
+('lambda':55) [34]	train-mlogloss:0.455851	test-mlogloss:0.780602 (down m 3rd)
+- 100,50,0.1: ('subsample':0.8, 'colsample_bytree':0.8, 'min_child_weight':3, 'lambda':8) [99]	train-mlogloss:0.247709	test-mlogloss:0.754371 (down s 3rd) !!**
+
+    <<changed to- 40,50,0.4, from 35,50,0.3>> 1 2 3 5 8 13 21 34 55
+- alpha [default=0] (taking best from before-- 'subsample':0.8, 'colsample_bytree':0.8, 'min_child_weight':3, 'lambda':8)
+(no alpha)  [33] train-mlogloss:0.187994	test-mlogloss:0.776730
+('alpha':1) [32]	train-mlogloss:0.235701	test-mlogloss:0.774799
+('alpha':3) [36] train-mlogloss:0.284968	test-mlogloss:0.773345 **
+('alpha':8) [39] train-mlogloss:0.374760	test-mlogloss:0.776348 (down f 3rd)
+('alpha':21) [39] train-mlogloss:0.508265 test-mlogloss:0.792832 (down f 3rd)
+
+- gamma [default=0] (taking best from before-- 'subsample':0.8, 'colsample_bytree':0.8, 'min_child_weight':3, 'lambda':8, 'alpha':3)
+('gamma':1) [38]	train-mlogloss:0.410971	test-mlogloss:0.759939 **
+('gamma':3) [39]	train-mlogloss:0.603722	test-mlogloss:0.768968 (down f 3rd)
+('gamma':8) [39]	train-mlogloss:0.770288	test-mlogloss:0.823989 (down f 3rd)
+('gamma':21) [39]	train-mlogloss:0.897542	test-mlogloss:0.918847 (down m 3rd)
+- 100,50,0.1: ('subsample':0.8, 'colsample_bytree':0.8, 'min_child_weight':3,'lambda':8,'alpha':3,'gamma':1) [99]	train-mlogloss:0.475943	test-mlogloss:0.757090 (down f 4th)
+- 100,15,0.1: ('subsample':0.8, 'colsample_bytree':0.8, 'min_child_weight':3,'lambda':8,'alpha':3,'gamma':1) [99]	train-mlogloss:0.499143	test-mlogloss:0.764149 (down s 3rd)
+- 200,50,0.1: ('subsample':0.8, 'colsample_bytree':0.8, 'min_child_weight':3,'lambda':8,'alpha':3,'gamma':1) [199]	train-mlogloss:0.387972	test-mlogloss:0.733689 (down s 4th) !!**
+- 250,50,0.1: ('subsample':0.8, 'colsample_bytree':0.8, 'min_child_weight':3, 'lambda':8, 'alpha':8, 'gamma':3) [249]	train-mlogloss:0.675021	test-mlogloss:0.783244
+
+*v5.3 (added UPC selective features)
+(taking best from before-- 'subsample':0.8, 'colsample_bytree':0.8, 'min_child_weight':3, 'lambda':8, 'alpha':3, 'gamma':1)
+- 40,50,0.4: [39] train-mlogloss:0.373035 test-mlogloss:0.739090 (down s 4th) **
+- 250,50,0.1: [249]	train-mlogloss:0.338051	test-mlogloss:0.704863 (down s 4th) !!**  => 300,50,0.1[PS:0.66510]   **
+
+*v5.4
+[39]	train-mlogloss:0.305788	test-mlogloss:0.738729
+
+---------------------------
+*v4.3
+- 35,50,0.3 (max_delta_step:1)
+accuracy_score(yTe, yhTe) 0.74131068417588619
+cross_entropy(yhP, yTe, classes) 
+0.80745369 (lowest-0.806948 at [29]th iteration)
+- 35,50,0.3 (max_delta_step:1)(removed TT14)[Fail]
+accuracy_score(yTe, yhTe) 0.74069895000783581
+cross_entropy(yhP, yTe, classes)
+0.80741829 (lowest-0.807286 at [28]th iteration)
+
+*v4.1
+- 35,50,0.3 (max_delta_step:1) [added mean/median/IQR]
+accuracy_score(yTe, yhTe) 0.74112263766571596
+cross_entropy(yhP, yTe, classes) 
+0.80397606 (lowest-0.802505 at [30]th iteration)
+- 35,50,0.3 (max_delta_step:3) [added mean/median/IQR]
+accuracy_score(yTe, yhTe) 0.74231359889679382
+cross_entropy(yhP, yTe, classes) 
+0.81415498 (lowest-0.812506 at [28]th iteration)
+- 100,50,0.1 (max_delta_step:1) [added mean/median/IQR]
+accuracy_score(yTe, yhTe) 0.74422540508352397
+cross_entropy(yhP, yTe, classes) 
+0.78620017 (lowest-0.785883 at [95]th iteration) **
+
+- 35,50,0.3 (max_delta_step:1)
+accuracy_score(yTe, yhTe) 0.74209421130159525
+cross_entropy(yhP, yTe, classes)
+0.80075353 (lowest-0.798802 at [31]st iteration)
+- 40,70,0.3 (max_delta_step:1)
+accuracy_score(yTe, yhTe) 0.74394333531826873
+cross_entropy(yhP, yTe, classes)
+0.81020111 (lowest-0.802958 at [30]th iteration)
+
+- 35,50,0.3 (NO max_delta_step)
+accuracy_score(yTe, yhTe) 0.73830194001316329
+cross_entropy(yhP, yTe, classes)
+0.84797812 (lowest-0.086562 at [28]th iteration)
+- 35,70,0.3 (NO max_delta_step)
+accuracy_score(yTe, yhTe) 0.73933619581909926
+cross_entropy(yhP, yTe, classes)
+0.8524527 (lowest-0.848742 at [26]th iteration)
+
+
+*v4.2[NOT GOOD]
+- 35,50,0.3 (NO max_delta_step)
+1.06 (lowest-1.05 at [25]th iteration)
+- 35,50,0.3 (max_delta_step:1)
+1.0191603 (lowest-0.994592 at [22]th iteration)
+
+
+
+---------------------------
+*v3
+- 500,50,0.01
+accuracy_score(yTe, yhTe) 0.74178080045131167
+cross_entropy(yhP, yTe, classes)
+0.81120902
+
+- 100,50,0.1*
+accuracy_score(yTe, yhTe) 0.74353590121290003
+cross_entropy(yhP, yTe, classes)
+0.78669935 (lowest-0.784660 at [84]th iteration) => [PS:0.73927]{DELTA- LCV:0.16536, PLB:0.14937}   **
+
+- 85,70,0.1
+(lowest-0.788263 at [78]th iteration)
+
+-35,100,1
+31.613033(lowest-2.099214 at [0]th iteration)
+
+-35,100,0.2
+0.806530
+
+(0-37)scale
+[<=1e-3]
+Counter({6: 4, 27: 4, 33: 3, 3: 2, 5: 2, 17: 2, 37: 2, 34: 1, 36: 1, 9: 1, 19: 1, 22: 1, 24: 1, 25: 1, 26: 1, 28: 1})
+[<=1e-2]
+Counter({37: 77, 30: 56, 33: 49, 35: 47, 34: 36, 36: 32, 27: 29, 28: 29, 31: 27, 32: 27, 6: 24, 24: 24, 29: 20, 9: 19, 25: 18, 7: 16, 4: 15, 16: 14, 2: 11, 5: 11, 13: 11, 3: 9, 12: 8, 17: 8, 22: 8, 1: 6, 10: 6, 14: 4, 21: 4, 11: 3, 18: 3, 26: 3, 8: 2, 19: 2, 20: 2, 0: 1, 15: 1})
+[<=1/38]
+Counter({37: 142, 30: 115, 34: 115, 33: 106, 35: 105, 36: 94, 31: 78, 27: 67, 28: 62, 4: 56, 29: 55, 32: 50, 9: 40, 16: 39, 5: 38, 6: 36, 2: 35, 24: 35, 25: 35, 17: 32, 7: 29, 13: 20, 14: 20, 21: 16, 22: 16, 18: 15, 3: 14, 12: 14, 10: 13, 26: 12, 1: 10, 11: 9, 19: 9, 20: 7, 15: 6, 0: 2, 8: 2})
+
+
+----------------------------
+*v1 or v2 ?!?!
+- 500,15,0.01
+accuracy_score(yTe, yhTe) 0.67862851411915881
+cross_entropy(yhP, yTe, classes)
+1.0355763
+- 500,50,0.01
+accuracy_score(yTe, yhTe) 0.69937631240793552
+cross_entropy(yhP, yTe, classes)
+0.95205635 => [PS:0.88865]
+- 1000,90,0.005
+accuracy_score(yTe, yhTe) 0.70197762246528972
+cross_entropy(yhP, yTe, classes)
+0.94741684
+
+
+
+
+
+
+
+** RandomForestClassifier **
+clf = RandomForestClassifier(n_estimators=100,verbose=2,n_jobs=4, random_state=app_random_state_value)
+Out[497]: 1.2780194996875907 # cross_entropy(yhP,yTe,classes,n=20)
+Out[498]: 1.2780239126060164 # cross_entropy(yhP,yTe,classes)
+Out[519]: 0.6569091421945028 # accuracy_score(yTe, yhTe)
+PRF->
+(array([ 0.75376884,  0.79069767,  0.73888889,  0.7489083 ,  0.64129988,
+         0.65426384,  0.58543551,  0.5       ,  0.        ,  0.26190476,
+         0.54945055,  0.86153846,  0.7480916 ,  0.70434783,  0.74637681,
+         0.76      ,  0.64852941,  0.67444121,  0.64      ,  0.67431193,
+         0.72      ,  0.88888889,  0.58421053,  0.81420765,  0.68615385,
+         0.68376068,  0.6953125 ,  0.70120482,  0.62901308,  0.66605839,
+         0.63674322,  0.4683871 ,  0.75978261,  0.        ,  0.47368421,
+         0.        ,  0.        ,  0.97313797]),
+ array([ 0.98765432,  0.5862069 ,  0.86871326,  0.80516432,  0.81282586,
+         0.90651209,  0.77971474,  0.01111111,  0.        ,  0.37116564,
+         0.27322404,  0.448     ,  0.4600939 ,  0.37850467,  0.33225806,
+         0.40425532,  0.50689655,  0.56285483,  0.0952381 ,  0.5610687 ,
+         0.2195122 ,  0.22068966,  0.30747922,  0.75252525,  0.67371601,
+         0.36446469,  0.37083333,  0.42983752,  0.52794411,  0.39247312,
+         0.31410917,  0.66020006,  0.68395303,  0.        ,  0.02903226,
+         0.        ,  0.        ,  0.84937833]),
+ array([ 0.85500534,  0.67326733,  0.79855899,  0.7760181 ,  0.71694642,
+         0.76000414,  0.66875085,  0.02173913,  0.        ,  0.3071066 ,
+         0.3649635 ,  0.58947368,  0.56976744,  0.49240122,  0.45982143,
+         0.52777778,  0.56903226,  0.61361627,  0.16580311,  0.6125    ,
+         0.3364486 ,  0.35359116,  0.40290381,  0.78215223,  0.67987805,
+         0.47548291,  0.48369565,  0.53296703,  0.57406403,  0.49391069,
+         0.42068966,  0.54799346,  0.71987642,  0.        ,  0.05471125,
+         0.        ,  0.        ,  0.90705615]),
+ array([1215,  116, 1531,  426, 1918, 4054, 3155,   90,    2,  326,  183,
+         125,  213,  214,  310,   47,  870, 1233,  168,  262,  164,  145,
+         361,  198,  662,  439,  240,  677, 1002,  930,  971, 3299, 2044,
+         195,  620,  291,  396, 2815], dtype=int64))
+C:\Users\vaibhav\Anaconda3\lib\site-packages\sklearn\metrics\classification.py:958: UndefinedMetricWarning: Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples.
+  'precision', 'predicted', average, warn_for)
